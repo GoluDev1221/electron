@@ -95,11 +95,16 @@ void WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) {
   // theme_provider->GetColor(
   //     ThemeProperties::COLOR_CONTROL_BUTTON_BACKGROUND);
 
+  // const SkColor bg_color =
+  //     SkColorSetRGB(0xD3, 0xD3, 0xD3);  // FIXME(@mlaurencin): Temporary -
+  //                                       // Remove once theme_provider is
+  //                                       fixed
   const SkColor bg_color =
-      SkColorSetRGB(0xD3, 0xD3, 0xD3);  // FIXME(@mlaurencin): Temporary -
+      SkColorSetRGB(0x00, 0x00, 0x00);  // FIXME(@mlaurencin): Temporary -
                                         // Remove once theme_provider is fixed
 
-  const SkAlpha theme_alpha = SkColorGetA(bg_color);
+  // const SkAlpha theme_alpha = SkColorGetA(bg_color);
+  const SkAlpha theme_alpha = 0x00;  // FIXME(@mlaurencin): remove after testing
   gfx::Rect bounds = GetContentsBounds();
   bounds.Inset(GetBetweenButtonSpacing(), 0, 0, 0);
 

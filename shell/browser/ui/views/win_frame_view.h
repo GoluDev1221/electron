@@ -32,12 +32,7 @@ class WinFrameView : public FramelessView {
   // views::View:
   const char* GetClassName() const override;
 
-  NativeWindowViews* window() const {
-    LOG(INFO) << "NativeWindowViews* window() << This function is being called "
-                 "as expected - "
-              << __LINE__;
-    return window_;
-  }
+  NativeWindowViews* window() const { return window_; }
   views::Widget* frame() const { return frame_; }
 
   bool IsMaximized() const;

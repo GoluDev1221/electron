@@ -296,33 +296,17 @@ void WinFrameView::LayoutCaptionButtons() {
 }
 
 void WinFrameView::LayoutWindowControlsOverlay() {
-  LOG(INFO) << "WinFrameView::LayoutWindowControlsOverlay - Function called - "
-               "not implemented yet - "
-            << __LINE__;
-  // FIXME(@mlaurencin): I do not have these WebApp related things
-  // implemented, but I don't think it needs to be
-  // Layout WebAppFrameToolbarView.
-  /*
   int overlay_height = caption_button_container_->size().height();
-  auto available_space =
-      gfx::Rect(0, WindowTopY(), MinimizeButtonX(), overlay_height);
-  web_app_frame_toolbar()->LayoutForWindowControlsOverlay(available_space);
-  */
+  int overlay_width = caption_button_container_->size().width();
+  int bounding_rect_width = width() - overlay_width;
+  auto bounding_rect =
+      GetMirroredRect(gfx::Rect(0, 0, bounding_rect_width, overlay_height));
 
-  // TODO(@mlaurencin): These will be replacd with calls to
-  // `SetWindowControlsOverlayRect`
-  /*
-  content::WebContents* web_contents = browser_view()->GetActiveWebContents();
-  // WebContents can be null when an app window is first launched.
-  if (web_contents) {
-    int overlay_width = web_app_frame_toolbar()->size().width() +
-                        caption_button_container_->size().width();
-    int bounding_rect_width = width() - overlay_width;
-    auto bounding_rect =
-        GetMirroredRect(gfx::Rect(0, 0, bounding_rect_width, overlay_height));
-    web_contents->UpdateWindowControlsOverlay(bounding_rect);
-  }
-  */
+  window()->SetWindowControlsOverlayRect(bounding_rect);
+  window()->NotifyLayoutWindowControlsOverlay();
+
+  LOG(INFO) << "WinFrameView::LayoutWindowControlsOverlay - RECT: "
+            << bounding_rect.ToString() << " - " << __LINE__;
 }
 
 }  // namespace electron
