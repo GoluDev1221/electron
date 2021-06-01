@@ -14,6 +14,8 @@
 #include "ui/base/win/hwnd_metrics.h"
 #include "ui/display/win/screen_win.h"
 
+#include "base/debug/stack_trace.h"
+
 namespace electron {
 
 const char WinFrameView::kViewClassName[] = "WinFrameView";
@@ -122,6 +124,8 @@ bool WinFrameView::ShouldCustomDrawSystemTitlebar() const {
 }
 
 void WinFrameView::Layout() {
+  LOG(INFO) << "WinFrameView::Layout - CALLED - " << __LINE__;
+  // base::debug::StackTrace().Print();
   LayoutCaptionButtons();
   if (window()->IsWindowControlsOverlayEnabled()) {
     LayoutWindowControlsOverlay();

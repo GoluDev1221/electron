@@ -82,9 +82,21 @@ SkColor WinCaptionButton::GetBaseColor() const {
   // <--FIXME(@mlaurencin): Most likely need to implement
 
   auto color = ToRGBHex(color_utils::GetSysSkColor(COLOR_BTNTEXT));
-  LOG(INFO) << "WinCaptionButton::GetBaseColor() - "
-            << std::to_string(COLOR_BTNTEXT) << " - " << color << " - "
-            << __LINE__;
+  // LOG(INFO) << "WinCaptionButton::GetBaseColor() - "
+  //           << std::to_string(COLOR_BTNTEXT) << " - " << color << " - "
+  //           << __LINE__;
+  if (button_type_ == VIEW_ID_MINIMIZE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::GetBaseColor() - VIEW_ID_MINIMIZE_BUTTON - "
+              << __LINE__;
+  else if (button_type_ == VIEW_ID_MAXIMIZE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::GetBaseColor() - VIEW_ID_MAXIMIZE_BUTTON - "
+              << __LINE__;
+  else if (button_type_ == VIEW_ID_RESTORE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::GetBaseColor() - VIEW_ID_RESTORE_BUTTON - "
+              << __LINE__;
+  else if (button_type_ == VIEW_ID_CLOSE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::GetBaseColor() - VIEW_ID_CLOSE_BUTTON - "
+              << __LINE__;
 
   // return SkColorSetRGB(0x00, 0x00,
   //                      0xFF);  // FIXME(@mlaurencin): Temporary -
@@ -93,6 +105,25 @@ SkColor WinCaptionButton::GetBaseColor() const {
 }
 
 void WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) {
+  // FIXME(@mlaurencin): Remove after testing
+  // LOG(INFO) << "WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) -
+  // CALLED - " << __LINE__;
+  if (button_type_ == VIEW_ID_MINIMIZE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) - "
+                 "VIEW_ID_MINIMIZE_BUTTON - "
+              << __LINE__;
+  else if (button_type_ == VIEW_ID_MAXIMIZE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) - "
+                 "VIEW_ID_MAXIMIZE_BUTTON - "
+              << __LINE__;
+  else if (button_type_ == VIEW_ID_RESTORE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) - "
+                 "VIEW_ID_RESTORE_BUTTON - "
+              << __LINE__;
+  else if (button_type_ == VIEW_ID_CLOSE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) - "
+                 "VIEW_ID_CLOSE_BUTTON - "
+              << __LINE__;
   // Paint the background of the button (the semi-transparent rectangle that
   // appears when you hover or press the button).
   // FIXME(@mlaurencin): theme_provider is running as a nullptr, so determine
@@ -115,12 +146,15 @@ void WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) {
       COLOR_BTNFACE);  // FIXME(@mlaurencin): I think correct defalt color, but
                        // need to figure out proper active/non-active opacity
 
-  const SkAlpha theme_alpha = SkColorGetA(bg_color);
+  // const SkAlpha theme_alpha = SkColorGetA(bg_color);
   // const SkAlpha theme_alpha = 0x00;  // FIXME(@mlaurencin): Could possibly
   // use to make button "transparent" and use banner as it's "color"
+  const SkAlpha theme_alpha = 0xFF;
 
   gfx::Rect bounds = GetContentsBounds();
-  bounds.Inset(GetBetweenButtonSpacing(), 0, 0, 0);
+  // bounds.Inset(GetBetweenButtonSpacing(), 0, 0, 0);
+  bounds.Inset(0, 0, 0, 0);  // TODO(@mlaurencin): How to make the buttons all
+                             // right next to each other
 
   // FIXME(@mlaurencin): Remove temp and have the code below not cause a
   // linking error instead
@@ -134,10 +168,14 @@ char)
 virtual void __cdecl electron::WinCaptionButton::OnPaintBackground(class
 gfx::Canvas *))
   */
-  auto temp = (theme_alpha == SK_AlphaOPAQUE ? 0xCC : theme_alpha);
-  if (theme_alpha > 0) {
-    canvas->FillRect(bounds, SkColorSetA(bg_color, temp));
-  }
+
+  canvas->FillRect(bounds, SkColorSetA(bg_color, theme_alpha));
+
+  // auto temp = (theme_alpha == SK_AlphaOPAQUE ? 0xCC : theme_alpha);
+  // if (theme_alpha > 0) {
+  //   canvas->FillRect(bounds, SkColorSetA(bg_color, temp));
+  // }
+
   // if (theme_alpha > 0) {
   //   canvas->FillRect(
   //       bounds,
@@ -247,6 +285,26 @@ void DrawRect(gfx::Canvas* canvas,
 }  // namespace
 
 void WinCaptionButton::PaintSymbol(gfx::Canvas* canvas) {
+  // FIXME(@mlaurencin): Remove after testing
+  // LOG(INFO) << "WinCaptionButton::PaintSymbol(gfx::Canvas* canvas) - CALLED -
+  // " << __LINE__;
+  if (button_type_ == VIEW_ID_MINIMIZE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::PaintSymbol(gfx::Canvas* canvas) - "
+                 "VIEW_ID_MINIMIZE_BUTTON - "
+              << __LINE__;
+  else if (button_type_ == VIEW_ID_MAXIMIZE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::PaintSymbol(gfx::Canvas* canvas) - "
+                 "VIEW_ID_MAXIMIZE_BUTTON - "
+              << __LINE__;
+  else if (button_type_ == VIEW_ID_RESTORE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::PaintSymbol(gfx::Canvas* canvas) - "
+                 "VIEW_ID_RESTORE_BUTTON - "
+              << __LINE__;
+  else if (button_type_ == VIEW_ID_CLOSE_BUTTON)
+    LOG(INFO) << "WinCaptionButton::PaintSymbol(gfx::Canvas* canvas) - "
+                 "VIEW_ID_CLOSE_BUTTON - "
+              << __LINE__;
+
   SkColor symbol_color = GetBaseColor();
   if (!GetEnabled() ||
       (!frame_view_->ShouldPaintAsActive() && GetState() != STATE_HOVERED &&
