@@ -11,6 +11,8 @@
 
 #include "shell/browser/ui/views/win_frame_view.h"
 
+#include "shell/common/color_util.h"  //FIXME(@mlaurencin): For obtaining default colors
+
 #include "chrome/grit/theme_resources.h"
 #include "ui/base/theme_provider.h"
 #include "ui/gfx/animation/tween.h"
@@ -79,9 +81,15 @@ SkColor WinCaptionButton::GetBaseColor() const {
   // return WinFrameView::GetReadableFeatureColor(bg_color);
   // <--FIXME(@mlaurencin): Most likely need to implement
 
-  return SkColorSetRGB(0x00, 0x00,
-                       0xFF);  // FIXME(@mlaurencin): Temporary -
-                               // Remove once theme_provider is fixed
+  auto color = ToRGBHex(color_utils::GetSysSkColor(COLOR_BTNTEXT));
+  LOG(INFO) << "WinCaptionButton::GetBaseColor() - "
+            << std::to_string(COLOR_BTNTEXT) << " - " << color << " - "
+            << __LINE__;
+
+  // return SkColorSetRGB(0x00, 0x00,
+  //                      0xFF);  // FIXME(@mlaurencin): Temporary -
+  //                              // Remove once theme_provider is fixed
+  return color_utils::GetSysSkColor(COLOR_BTNTEXT);
 }
 
 void WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) {
@@ -99,12 +107,18 @@ void WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) {
   //     SkColorSetRGB(0xD3, 0xD3, 0xD3);  // FIXME(@mlaurencin): Temporary -
   //                                       // Remove once theme_provider is
   //                                       fixed
-  const SkColor bg_color =
-      SkColorSetRGB(0x00, 0x00, 0x00);  // FIXME(@mlaurencin): Temporary -
-                                        // Remove once theme_provider is fixed
+  // const SkColor bg_color =
+  //     SkColorSetRGB(0x00, 0x00, 0x00);  // FIXME(@mlaurencin): Could possibly
+  //     use to make button "transparent" and use banner as it's "color"
 
-  // const SkAlpha theme_alpha = SkColorGetA(bg_color);
-  const SkAlpha theme_alpha = 0x00;  // FIXME(@mlaurencin): remove after testing
+  const SkColor bg_color = color_utils::GetSysSkColor(
+      COLOR_BTNFACE);  // FIXME(@mlaurencin): I think correct defalt color, but
+                       // need to figure out proper active/non-active opacity
+
+  const SkAlpha theme_alpha = SkColorGetA(bg_color);
+  // const SkAlpha theme_alpha = 0x00;  // FIXME(@mlaurencin): Could possibly
+  // use to make button "transparent" and use banner as it's "color"
+
   gfx::Rect bounds = GetContentsBounds();
   bounds.Inset(GetBetweenButtonSpacing(), 0, 0, 0);
 
