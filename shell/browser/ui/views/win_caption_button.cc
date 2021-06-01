@@ -34,7 +34,7 @@ WinCaptionButton::WinCaptionButton(PressedCallback callback,
   // Not focusable by default, only for accessibility.
   SetFocusBehavior(FocusBehavior::ACCESSIBLE_ONLY);
   SetAccessibleName(accessible_name);
-  SetTooltipText(accessible_name);
+  // SetTooltipText(accessible_name);
 }
 
 gfx::Size WinCaptionButton::CalculatePreferredSize() const {
