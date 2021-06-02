@@ -34,7 +34,6 @@ WinCaptionButton::WinCaptionButton(PressedCallback callback,
   // Not focusable by default, only for accessibility.
   SetFocusBehavior(FocusBehavior::ACCESSIBLE_ONLY);
   SetAccessibleName(accessible_name);
-  // SetTooltipText(accessible_name);
 }
 
 gfx::Size WinCaptionButton::CalculatePreferredSize() const {
@@ -43,48 +42,18 @@ gfx::Size WinCaptionButton::CalculatePreferredSize() const {
   // comment, I think that the if condition might not apply to our case. Or it
   // may need a different conditional check
   int height = WindowFrameUtil::kWindows10GlassCaptionButtonHeightRestored;
-  // if (!frame_view_->browser_view()->webui_tab_strip() &&
-  //     frame_view_->IsMaximized()) {
-  //   int maximized_height =
-  //       frame_view_->browser_view()->GetTabStripVisible()
-  //           ? frame_view_->browser_view()->GetTabStripHeight()
-  //           : frame_view_->TitlebarMaximizedVisualHeight();
-  //   constexpr int kMaximizedBottomMargin = 2;
-  //   maximized_height -= kMaximizedBottomMargin;
-  //   height = std::min(height, maximized_height);
-  // }
   int base_width = WindowFrameUtil::kWindows10GlassCaptionButtonWidth;
   return gfx::Size(base_width + GetBetweenButtonSpacing(), height);
 }
 
 SkColor WinCaptionButton::GetBaseColor() const {
-  // Get the theme's calculated custom control button background color
+  // TODO(@mlaurencin): For handling light vs dark themed background colors in
+  // future: Get the theme's calculated custom control button background color
   // (as it takes into account images, etc).  If none is specified (likely when
   // there is no theme active), fall back to the titlebar color.
 
-  /* //FIXME(@mlaurencin): Temporary - Uncomment once theme_provider is fixed
-  const int control_button_bg_color_id =
-      (frame_view_->ShouldPaintAsActive()
-           ? ThemeProperties::COLOR_WINDOW_CONTROL_BUTTON_BACKGROUND_ACTIVE
-           : ThemeProperties::COLOR_WINDOW_CONTROL_BUTTON_BACKGROUND_INACTIVE);
-  const ui::ThemeProvider* theme_provider = GetThemeProvider();
-  const bool has_custom_color =
-      theme_provider->HasCustomColor(control_button_bg_color_id);
-  (void)has_custom_color; //FIXME(@mlaurencin): Remove once I uncomment the
-  below code
-  */
-  // const SkColor bg_color =
-  //     (has_custom_color ?
-  //     theme_provider->GetColor(control_button_bg_color_id)
-  //                       : frame_view_->GetTitlebarColor());
-
-  // return WinFrameView::GetReadableFeatureColor(bg_color);
-  // <--FIXME(@mlaurencin): Most likely need to implement
-
   auto color = ToRGBHex(color_utils::GetSysSkColor(COLOR_BTNTEXT));
-  // LOG(INFO) << "WinCaptionButton::GetBaseColor() - "
-  //           << std::to_string(COLOR_BTNTEXT) << " - " << color << " - "
-  //           << __LINE__;
+
   if (button_type_ == VIEW_ID_MINIMIZE_BUTTON)
     LOG(INFO) << "WinCaptionButton::GetBaseColor() - VIEW_ID_MINIMIZE_BUTTON - "
               << __LINE__;
@@ -98,9 +67,6 @@ SkColor WinCaptionButton::GetBaseColor() const {
     LOG(INFO) << "WinCaptionButton::GetBaseColor() - VIEW_ID_CLOSE_BUTTON - "
               << __LINE__;
 
-  // return SkColorSetRGB(0x00, 0x00,
-  //                      0xFF);  // FIXME(@mlaurencin): Temporary -
-  //                              // Remove once theme_provider is fixed
   return color_utils::GetSysSkColor(COLOR_BTNTEXT);
 }
 
@@ -143,7 +109,7 @@ void WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) {
   //     use to make button "transparent" and use banner as it's "color"
 
   const SkColor bg_color = color_utils::GetSysSkColor(
-      COLOR_BTNFACE);  // FIXME(@mlaurencin): I think correct defalt color, but
+      COLOR_BTNFACE);  // FIXME(@mlaurencin): I think correct default color, but
                        // need to figure out proper active/non-active opacity
 
   // const SkAlpha theme_alpha = SkColorGetA(bg_color);
@@ -306,13 +272,23 @@ void WinCaptionButton::PaintSymbol(gfx::Canvas* canvas) {
               << __LINE__;
 
   SkColor symbol_color = GetBaseColor();
-  if (!GetEnabled() ||
-      (!frame_view_->ShouldPaintAsActive() && GetState() != STATE_HOVERED &&
-       GetState() != STATE_PRESSED)) {
-    symbol_color =
-        SkColorSetA(symbol_color, WinFrameView::kInactiveTitlebarFeatureAlpha);
-  } else if (button_type_ == VIEW_ID_CLOSE_BUTTON &&
-             hover_animation().is_animating()) {
+  // if (!GetEnabled() ||
+  //     (!frame_view_->ShouldPaintAsActive() && GetState() != STATE_HOVERED &&
+  //      GetState() != STATE_PRESSED)) {
+  //   symbol_color =
+  //       SkColorSetA(symbol_color,
+  //       WinFrameView::kInactiveTitlebarFeatureAlpha);
+  // } else if (button_type_ == VIEW_ID_CLOSE_BUTTON &&
+  //            hover_animation().is_animating()) {
+  //   symbol_color = gfx::Tween::ColorValueBetween(
+  //       hover_animation().GetCurrentValue(), symbol_color, SK_ColorWHITE);
+  // } else if (button_type_ == VIEW_ID_CLOSE_BUTTON &&
+  //            (GetState() == STATE_HOVERED || GetState() == STATE_PRESSED)) {
+  //   symbol_color = SK_ColorWHITE;
+  // }
+
+  if (button_type_ == VIEW_ID_CLOSE_BUTTON &&
+      hover_animation().is_animating()) {
     symbol_color = gfx::Tween::ColorValueBetween(
         hover_animation().GetCurrentValue(), symbol_color, SK_ColorWHITE);
   } else if (button_type_ == VIEW_ID_CLOSE_BUTTON &&
