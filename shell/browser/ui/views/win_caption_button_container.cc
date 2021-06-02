@@ -81,39 +81,19 @@ WinCaptionButtonContainer::WinCaptionButtonContainer(WinFrameView* frame_view)
 
 WinCaptionButtonContainer::~WinCaptionButtonContainer() {}
 
-// TODO: Confirm that this NonClientHitTest is able to be called properly (right
-// now it isnt being called by anything)
 int WinCaptionButtonContainer::NonClientHitTest(const gfx::Point& point) const {
-  // FIXME(@mlaurencin): This DCHECK needs to pass, but I am commenting now to
-  // view pointer value
   DCHECK(HitTestPoint(point))
       << "should only be called with a point inside this view's bounds";
-  // LOG(INFO)
-  //     << "WinCaptionButtonContainer::NonClientHitTest - Button frame_view - "
-  //     << static_cast<void*>(frame_view_) << " - " << __LINE__;
   if (HitTestCaptionButton(minimize_button_, point)) {
-    auto name = minimize_button_->GetAccessibleName();
-    // LOG(INFO) << "WinCaptionButtonContainer::NonClientHitTest - Minimize "
-    //              "button captioned - "
-    //           << name << " - " << __LINE__;
     return HTMINBUTTON;
   }
   if (HitTestCaptionButton(maximize_button_, point)) {
-    // LOG(INFO) << "WinCaptionButtonContainer::NonClientHitTest - Maximize "
-    //              "button captioned - "
-    //           << __LINE__;
     return HTMAXBUTTON;
   }
   if (HitTestCaptionButton(restore_button_, point)) {
-    // LOG(INFO) << "WinCaptionButtonContainer::NonClientHitTest - Restore "
-    //              "button captioned - "
-    //           << __LINE__;
     return HTMAXBUTTON;
   }
   if (HitTestCaptionButton(close_button_, point)) {
-    // LOG(INFO) << "WinCaptionButtonContainer::NonClientHitTest - Close "
-    //              "button captioned - "
-    //           << __LINE__;
     return HTCLOSE;
   }
   return HTCAPTION;
@@ -156,9 +136,6 @@ void WinCaptionButtonContainer::OnWidgetBoundsChanged(
 }
 
 void WinCaptionButtonContainer::UpdateButtons() {
-  // LOG(INFO) << "WinCaptionButtonContainer::UpdateButtons - CALLED - " <<
-  // __LINE__; base::debug::StackTrace().Print();
-
   const bool is_maximized = frame_view_->frame()->IsMaximized();
   restore_button_->SetVisible(is_maximized);
   maximize_button_->SetVisible(!is_maximized);

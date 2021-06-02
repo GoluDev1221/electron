@@ -171,22 +171,17 @@ class NativeWindowViews : public NativeWindow,
   TaskbarHost& taskbar_host() { return taskbar_host_; }
 #endif
 
-#if defined(OS_WIN)  // FIXME(@mlaurencin): Added to test formatting the
-                     // addition of this for Windows
+#if defined(OS_WIN)
   enum class TitleBarStyle{
       kNormal,
       kHidden,
   };
   TitleBarStyle title_bar_style() const { return title_bar_style_; }
   bool IsWindowControlsOverlayEnabled() const;
-  // TODO(@mlaurencin): WinFrameView::ShouldCustomDrawSystemTitlebar seems to be
-  // functionally the same for our use case, so it may not be needed
 #endif
 
  private:
-#if defined(OS_WIN)  // FIXME(@mlaurencin): Added to test formatting the
-                     // addition of this for Windows
-  // The "titleBarStyle" option.
+#if defined(OS_WIN)
   TitleBarStyle title_bar_style_ = TitleBarStyle::kNormal;
 #endif
 

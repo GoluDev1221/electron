@@ -92,7 +92,6 @@ struct Converter<electron::NativeWindowViews::TitleBarStyle> {
     if (!ConvertFromV8(isolate, val, &title_bar_style))
       return false;
     if (title_bar_style == "hidden") {
-      LOG(INFO) << "Titlebar style hidden properly read in - " << __LINE__;
       *out = TitleBarStyle::kHidden;
     } else {
       return false;
@@ -184,7 +183,6 @@ NativeWindowViews::NativeWindowViews(const gin_helper::Dictionary& options,
   if (transparent())
     thick_frame_ = false;
 
-  // FIXME(@mlaurencin): Testing how to get the title bar style parameter
   options.Get(options::kTitleBarStyle, &title_bar_style_);
 
   if (title_bar_style_ != TitleBarStyle::kNormal)
@@ -394,7 +392,6 @@ void NativeWindowViews::SetGTKDarkThemeEnabled(bool use_dark_theme) {
 #endif
 }
 
-// FIXME(@mlaurencin): Change/Move if necessary
 bool NativeWindowViews::IsWindowControlsOverlayEnabled() const {
   return title_bar_style_ == TitleBarStyle::kHidden;
 }

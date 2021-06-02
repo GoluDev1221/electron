@@ -37,9 +37,7 @@ class WinFrameView : public FramelessView {
 
   bool IsMaximized() const;
 
-  bool ShouldCustomDrawSystemTitlebar()
-      const;  // FIXME(@mlaurencin): Check if this implementation is similar
-              // enough to the Chromium one
+  bool ShouldCustomDrawSystemTitlebar() const;
 
   // Visual height of the titlebar when the window is maximized (i.e. excluding
   // the area above the top of the screen).

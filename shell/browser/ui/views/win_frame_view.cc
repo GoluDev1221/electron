@@ -115,66 +115,20 @@ bool WinFrameView::IsMaximized() const {
   return frame()->IsMaximized();
 }
 
-// TODO(@mlaurencin): bool IsWindowControlsOverlayEnabled() const; was defined
-// in NativeWindowViews and seems to be functionally the same for our use case,
-// so this may not be needed
 bool WinFrameView::ShouldCustomDrawSystemTitlebar() const {
   return window()->title_bar_style() !=
          NativeWindowViews::TitleBarStyle::kNormal;
 }
 
 void WinFrameView::Layout() {
-  LOG(INFO) << "WinFrameView::Layout - CALLED - " << __LINE__;
-  // base::debug::StackTrace().Print();
   LayoutCaptionButtons();
   if (window()->IsWindowControlsOverlayEnabled()) {
     LayoutWindowControlsOverlay();
   }
-  // else
-  //   LayoutTitleBar();
-  // LayoutClientView();
   NonClientFrameView::Layout();
 }
 
-// SkColor WinFrameView::GetReadableFeatureColor(
-//     SkColor background_color) {
-//   // color_utils::GetColorWithMaxContrast()/IsDark() aren't used here because
-//   // they switch based on the Chrome light/dark endpoints, while we want to
-//   use
-//   // the system native behavior below.
-//   const auto windows_luma = [](SkColor c) {
-//     return 0.25f * SkColorGetR(c) + 0.625f * SkColorGetG(c) +
-//            0.125f * SkColorGetB(c);
-//   };
-//   return windows_luma(background_color) <= 128.0f ? SK_ColorWHITE
-//                                                   : SK_ColorBLACK;
-
 int WinFrameView::FrameTopBorderThickness(bool restored) const {
-  // FIXME(@mlaurencin): I don't think either of these cases apply to us,
-  // so I am just commenting it all out
-  // const bool is_fullscreen =
-  //     (frame()->IsFullscreen() || IsMaximized()) && !restored;
-
-  // if (!is_fullscreen) {
-  //   // Restored windows have a smaller top resize handle than the system
-  //   // default. When maximized, the OS sizes the window such that the border
-  //   // extends beyond the screen edges. In that case, we must return the
-  //   default
-  //   // value.
-  //   if (browser_view()->GetTabStripVisible())
-  //     return drag_handle_padding_;
-
-  //   // There is no top border in tablet mode when the window is "restored"
-  //   // because it is still tiled into either the left or right pane of the
-  //   // display takes up the entire vertical extent of the screen. Note that a
-  //   // rendering bug in Windows may still cause the very top of the window to
-  //   be
-  //   // cut off intermittently, but that's an OS issue that affects all
-  //   // applications, not specifically Chrome.
-  //   if (IsWebUITabStrip())
-  //     return 0;
-  // }
-
   // Mouse and touch locations are floored but GetSystemMetricsInDIP is rounded,
   // so we need to floor instead or else the difference will cause the hittest
   // to fail when it ought to succeed.
@@ -206,33 +160,12 @@ int WinFrameView::FrameTopBorderThicknessPx(bool restored) const {
 int WinFrameView::TitlebarMaximizedVisualHeight() const {
   int maximized_height =
       display::win::ScreenWin::GetSystemMetricsInDIP(SM_CYCAPTION);
-  // FIXME(@mlaurencin): I don't think we have this,
-  // so I am just commenting this case all out
-  // if (web_app_frame_toolbar()) {
-  //   // Adding 2px of vertical padding puts at least 1 px of space on the top
-  //   and
-  //   // bottom of the element.
-  //   constexpr int kVerticalPadding = 2;
-  //   maximized_height = std::max(
-  //       maximized_height,
-  //       web_app_frame_toolbar()->GetPreferredSize().height() +
-  //                             kVerticalPadding);
-  // }
   return maximized_height;
 }
 
 int WinFrameView::TitlebarHeight(bool restored) const {
   if (frame()->IsFullscreen() && !restored)
     return 0;
-
-  // The titlebar's actual height is the same in restored and maximized, but
-  // some of it is above the screen in maximized mode. See the comment in
-  // FrameTopBorderThicknessPx(). For WebUI, // FIXME(@mlaurencin): I don't
-  // think this applies to us, so I am just returning the false case return
-  // (IsWebUITabStrip()
-  //             ? caption_button_container_->GetPreferredSize().height()
-  //             : TitlebarMaximizedVisualHeight()) +
-  //        FrameTopBorderThickness(false);
 
   return TitlebarMaximizedVisualHeight() + FrameTopBorderThickness(false);
 }
@@ -244,9 +177,7 @@ int WinFrameView::WindowTopY() const {
   // non-integral dips, so we return the closest reasonable values instead.
   if (IsMaximized())
     return FrameTopBorderThickness(false);
-  // FIXME(@mlaurencin): I don't think this applies to us,
-  // so I am just returning the false case
-  // return IsWebUITabStrip() ? FrameTopBorderThickness(true) : 1;
+
   return 1;
 }
 
@@ -256,47 +187,22 @@ void WinFrameView::LayoutCaptionButtons() {
 
   // Non-custom system titlebar already contains caption buttons.
   if (!ShouldCustomDrawSystemTitlebar()) {
-    LOG(INFO)
-        << "WinFrameView::LayoutCaptionButtons - do NOT draw custom titlebar - "
-        << __LINE__;
     caption_button_container_->SetVisible(false);
     return;
   }
 
-  LOG(INFO) << "WinFrameView::LayoutCaptionButtons - DRAW custom titlebar - "
-            << __LINE__;
   caption_button_container_->SetVisible(true);
 
-  ///*
   const gfx::Size preferred_size =
       caption_button_container_->GetPreferredSize();
   int height = preferred_size.height();
-  //*/
 
-  // We use the standard caption bar height when maximized in tablet mode, which
-  // is smaller than our preferred button size. <-- TODO(@mlaurencin): I believe
-  // this casing is then not necessary for our purposes if (IsWebUITabStrip() &&
-  // IsMaximized()) {
-  //   height = std::min(height, TitlebarMaximizedVisualHeight());
-  // } else if (browser_view()->IsWindowControlsOverlayEnabled()) { //
-  // FIXME(@mlaurencin): Forcing it to be enabled for now
-  //   // When the WCO is enabled, the caption button container should be the
-  //   same
-  //   // height as the WebAppFrameToolbar for a seamless overlay.
-  //   height = IsMaximized() ? TitlebarMaximizedVisualHeight()
-  //                          : TitlebarHeight(false) - WindowTopY();
-  // }
-
-  // FIXME(@mlaurencin): Remove after testing and just have the above remain
-
-  ///*
   height = IsMaximized() ? TitlebarMaximizedVisualHeight()
                          : TitlebarHeight(false) - WindowTopY();
 
   caption_button_container_->SetBounds(width() - preferred_size.width(),
                                        WindowTopY(), preferred_size.width(),
                                        height);
-  //*/
 }
 
 void WinFrameView::LayoutWindowControlsOverlay() {
@@ -308,9 +214,6 @@ void WinFrameView::LayoutWindowControlsOverlay() {
 
   window()->SetWindowControlsOverlayRect(bounding_rect);
   window()->NotifyLayoutWindowControlsOverlay();
-
-  LOG(INFO) << "WinFrameView::LayoutWindowControlsOverlay - RECT: "
-            << bounding_rect.ToString() << " - " << __LINE__;
 }
 
 }  // namespace electron
