@@ -31,6 +31,7 @@ const int kMaxScanRetries = 5;
 
 void OnDeviceChosen(const content::BluetoothChooser::EventHandler& handler,
                     const std::string& device_id) {
+  LOG(INFO) << "Bluetooth device choosen" << device_id;
   if (device_id.empty()) {
     handler.Run(content::BluetoothChooserEvent::CANCELLED, device_id);
   } else {
@@ -51,15 +52,24 @@ BluetoothChooser::~BluetoothChooser() {
 void BluetoothChooser::SetAdapterPresence(AdapterPresence presence) {
   switch (presence) {
     case AdapterPresence::ABSENT:
+      LOG(INFO) << "BluetoothChooser::SetAdapterPresence, presence is ABSENT";
+      break;
     case AdapterPresence::POWERED_OFF:
-    // Chrome currently directs the user to system preferences
-    // to grant bluetooth permission for this case, should we
-    // do something similar ?
-    // https://chromium-review.googlesource.com/c/chromium/src/+/2617129
+      // Chrome currently directs the user to system preferences
+      // to grant bluetooth permission for this case, should we
+      // do something similar ?
+      // https://chromium-review.googlesource.com/c/chromium/src/+/2617129
+      LOG(INFO)
+          << "BluetoothChooser::SetAdapterPresence, presence is POWERED_OFF";
+      break;
     case AdapterPresence::UNAUTHORIZED:
+      LOG(INFO)
+          << "BluetoothChooser::SetAdapterPresence, presence is UNAUTHORIZED";
       event_handler_.Run(content::BluetoothChooserEvent::CANCELLED, "");
       break;
     case AdapterPresence::POWERED_ON:
+      LOG(INFO)
+          << "BluetoothChooser::SetAdapterPresence, presence is POWERED_ON";
       break;
   }
 }
@@ -67,17 +77,26 @@ void BluetoothChooser::SetAdapterPresence(AdapterPresence presence) {
 void BluetoothChooser::ShowDiscoveryState(DiscoveryState state) {
   switch (state) {
     case DiscoveryState::FAILED_TO_START:
+      LOG(INFO) << "BluetoothChooser::ShowDiscoveryState, discovery state is "
+                   "FAILED_TO_START";
       refreshing_ = false;
       event_handler_.Run(content::BluetoothChooserEvent::CANCELLED, "");
       break;
     case DiscoveryState::IDLE:
+      LOG(INFO)
+          << "BluetoothChooser::ShowDiscoveryState, discovery state is IDLE";
       refreshing_ = false;
       if (device_map_.empty()) {
+        LOG(INFO) << "BluetoothChooser::ShowDiscoveryState, discovery state is "
+                     "IDLE, device map is empty";
         auto event = ++num_retries_ > kMaxScanRetries
                          ? content::BluetoothChooserEvent::CANCELLED
                          : content::BluetoothChooserEvent::RESCAN;
         event_handler_.Run(event, "");
       } else {
+        LOG(INFO)
+            << "BluetoothChooser::ShowDiscoveryState, discovery state is IDLE, "
+               "device map has items about to call select-bluetooth-device";
         bool prevent_default = api_web_contents_->Emit(
             "select-bluetooth-device", GetDeviceList(),
             base::BindOnce(&OnDeviceChosen, event_handler_));
@@ -90,12 +109,18 @@ void BluetoothChooser::ShowDiscoveryState(DiscoveryState state) {
       }
       break;
     case DiscoveryState::DISCOVERING:
+      LOG(INFO) << "BluetoothChooser::ShowDiscoveryState, discovery state is "
+                   "DISCOVERING";
       // The first time this state fires is due to a rescan triggering so set a
       // flag to ignore devices
       if (!refreshing_) {
+        LOG(INFO) << "BluetoothChooser::ShowDiscoveryState, discovery state is "
+                     "DISCOVERING, not refreshing; set refreshing to true";
         refreshing_ = true;
       } else {
         // The second time this state fires we are now safe to pick a device
+        LOG(INFO) << "BluetoothChooser::ShowDiscoveryState, discovery state is "
+                     "DISCOVERING, refreshing; set refreshing to false";
         refreshing_ = false;
       }
       break;
@@ -108,7 +133,11 @@ void BluetoothChooser::AddOrUpdateDevice(const std::string& device_id,
                                          bool is_gatt_connected,
                                          bool is_paired,
                                          int signal_strength_level) {
+  LOG(INFO) << "BluetoothChooser::AddOrUpdateDevice: " >> device_id >>
+      ", named: " >> device_name;
   if (refreshing_) {
+    LOG(INFO) << "BluetoothChooser::AddOrUpdateDevice refreshing so ignore " >>
+        device_id >> ", named: " >> device_name;
     // If the list of bluetooth devices is currently being generated don't fire
     // an event
     return;
