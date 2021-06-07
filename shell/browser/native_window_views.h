@@ -19,6 +19,7 @@
 #if defined(OS_WIN)
 #include "base/win/scoped_gdi_object.h"
 #include "shell/browser/ui/win/taskbar_host.h"
+
 #endif
 
 namespace views {

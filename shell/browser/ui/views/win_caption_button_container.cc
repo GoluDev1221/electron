@@ -10,7 +10,6 @@
 #include "shell/browser/ui/views/win_frame_view.h"
 
 #include "ui/base/l10n/l10n_util.h"
-//#include "ui/base/metadata/metadata_impl_macros.h"
 #include "ui/strings/grit/ui_strings.h"
 #include "ui/views/layout/flex_layout.h"
 #include "ui/views/view_class_properties.h"
@@ -116,10 +115,6 @@ void WinCaptionButtonContainer::AddedToWidget() {
   UpdateButtons();
 
   if (frame_view_->window()->IsWindowControlsOverlayEnabled()) {
-    // SetBackground(
-    //     views::CreateSolidBackground(frame_view_->GetTitlebarColor()));
-    // BrowserView paints to a layer, so this must do the same to ensure that it
-    // paints on top of the BrowserView.
     SetPaintToLayer();
   }
 }

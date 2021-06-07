@@ -7,7 +7,6 @@
 
 #include "shell/browser/native_window_views.h"
 #include "shell/browser/ui/views/frameless_view.h"
-
 #include "shell/browser/ui/views/win_caption_button.h"
 
 namespace electron {
@@ -50,6 +49,8 @@ class WinFrameView : public FramelessView {
  private:
   DISALLOW_COPY_AND_ASSIGN(WinFrameView);
   friend class WinCaptionButtonContainer;
+
+  int FrameBorderThickness() const;
 
   // Returns the thickness of the window border for the top edge of the frame,
   // which is sometimes different than FrameBorderThickness(). Does not include

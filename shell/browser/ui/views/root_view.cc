@@ -185,9 +185,7 @@ void RootView::Layout() {
     menu_bar_->SetBoundsRect(menu_bar_bounds);
 
   window_->content_view()->SetBoundsRect(
-      // gfx::Rect(0, menu_bar_visible_ ? menu_bar_bounds.bottom() : 0,
-      // //FIXME(@mlaurencin): Uncomment after testing
-      gfx::Rect(0, menu_bar_visible_ ? menu_bar_bounds.bottom() : 50,
+      gfx::Rect(0, menu_bar_visible_ ? menu_bar_bounds.bottom() : 0,
                 size().width(), size().height() - menu_bar_bounds.height()));
 }
 

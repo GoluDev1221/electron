@@ -53,8 +53,7 @@ void WinCaptionButton::OnPaintBackground(gfx::Canvas* canvas) {
   // appears when you hover or press the button).
 
   // TODO(@mlaurencin): For having non-default button colors in future, bg_color
-  // and
-  // theme_alpha can be set to 0x00 so the button is transparent. See
+  // and theme_alpha can be set to 0x00 so the button is transparent. See
   // WinCaptionButton::GetBaseColor for the needed button text changes
   const SkColor bg_color = color_utils::GetSysSkColor(COLOR_BTNFACE);
   const SkAlpha theme_alpha = 0xFF;
