@@ -133,11 +133,11 @@ void BluetoothChooser::AddOrUpdateDevice(const std::string& device_id,
                                          bool is_gatt_connected,
                                          bool is_paired,
                                          int signal_strength_level) {
-  LOG(INFO) << "BluetoothChooser::AddOrUpdateDevice: " >> device_id >>
-      ", named: " >> device_name;
+  LOG(INFO) << "BluetoothChooser::AddOrUpdateDevice: " << device_id
+            << ", named: " << device_name;
   if (refreshing_) {
-    LOG(INFO) << "BluetoothChooser::AddOrUpdateDevice refreshing so ignore " >>
-        device_id >> ", named: " >> device_name;
+    LOG(INFO) << "BluetoothChooser::AddOrUpdateDevice refreshing so ignore "
+              << device_id << ", named: " << device_name;
     // If the list of bluetooth devices is currently being generated don't fire
     // an event
     return;
