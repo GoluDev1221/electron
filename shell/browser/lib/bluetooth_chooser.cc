@@ -53,6 +53,7 @@ void BluetoothChooser::SetAdapterPresence(AdapterPresence presence) {
   switch (presence) {
     case AdapterPresence::ABSENT:
       LOG(INFO) << "BluetoothChooser::SetAdapterPresence, presence is ABSENT";
+      event_handler_.Run(content::BluetoothChooserEvent::CANCELLED, "");
       break;
     case AdapterPresence::POWERED_OFF:
       // Chrome currently directs the user to system preferences
@@ -61,6 +62,7 @@ void BluetoothChooser::SetAdapterPresence(AdapterPresence presence) {
       // https://chromium-review.googlesource.com/c/chromium/src/+/2617129
       LOG(INFO)
           << "BluetoothChooser::SetAdapterPresence, presence is POWERED_OFF";
+      event_handler_.Run(content::BluetoothChooserEvent::CANCELLED, "");
       break;
     case AdapterPresence::UNAUTHORIZED:
       LOG(INFO)
@@ -135,6 +137,7 @@ void BluetoothChooser::AddOrUpdateDevice(const std::string& device_id,
                                          int signal_strength_level) {
   LOG(INFO) << "BluetoothChooser::AddOrUpdateDevice: " << device_id
             << ", named: " << device_name;
+#if defined(OS_MAC)
   if (refreshing_) {
     LOG(INFO) << "BluetoothChooser::AddOrUpdateDevice refreshing so ignore "
               << device_id << ", named: " << device_name;
@@ -142,6 +145,7 @@ void BluetoothChooser::AddOrUpdateDevice(const std::string& device_id,
     // an event
     return;
   }
+#endif  // defined(OS_MAC)
   bool changed = false;
   auto entry = device_map_.find(device_id);
   if (entry == device_map_.end()) {
