@@ -72,6 +72,7 @@ void BluetoothChooser::SetAdapterPresence(AdapterPresence presence) {
     case AdapterPresence::POWERED_ON:
       LOG(INFO)
           << "BluetoothChooser::SetAdapterPresence, presence is POWERED_ON";
+      rescan_ = true;
       break;
   }
 }
@@ -115,7 +116,7 @@ void BluetoothChooser::ShowDiscoveryState(DiscoveryState state) {
                    "DISCOVERING";
       // The first time this state fires is due to a rescan triggering so set a
       // flag to ignore devices
-      if (!refreshing_) {
+      if (rescan_ && !refreshing_) {
         LOG(INFO) << "BluetoothChooser::ShowDiscoveryState, discovery state is "
                      "DISCOVERING, not refreshing; set refreshing to true";
         refreshing_ = true;
@@ -137,7 +138,6 @@ void BluetoothChooser::AddOrUpdateDevice(const std::string& device_id,
                                          int signal_strength_level) {
   LOG(INFO) << "BluetoothChooser::AddOrUpdateDevice: " << device_id
             << ", named: " << device_name;
-#if defined(OS_MAC)
   if (refreshing_) {
     LOG(INFO) << "BluetoothChooser::AddOrUpdateDevice refreshing so ignore "
               << device_id << ", named: " << device_name;
@@ -145,7 +145,6 @@ void BluetoothChooser::AddOrUpdateDevice(const std::string& device_id,
     // an event
     return;
   }
-#endif  // defined(OS_MAC)
   bool changed = false;
   auto entry = device_map_.find(device_id);
   if (entry == device_map_.end()) {
